@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Untitled</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ดึ๋งดั๋ง หวังกำไร - ระบบจองคิวบูธ</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sriracha&family=Prompt:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <h1>💖 ดึ๋งดั๋ง หวังกำไร 💖</h1>
+        <p>สร้างสไลม์ในฝันของคุณ!</p>
+    </header>
+
+    <main>
+        <section id="user-section" class="container">
+            <h2>🎉 จองคิวสร้างสไลม์ 🎉</h2>
+            <form id="booking-form">
+                <div class="form-group">
+                    <label for="username">ชื่อเล่น:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <p>เลือกของตกแต่ง (ราคาเริ่มต้นสไลม์ 20฿):</p>
+                    <div class="options-grid">
+                        <label><input type="checkbox" name="addons" value="ผงมุก"> ผงมุก (+5฿)</label>
+                        <label><input type="checkbox" name="addons" value="โฟม"> โฟม (+5฿)</label>
+                        <label><input type="checkbox" name="addons" value="มาชเมลโล่"> มาชเมลโล่ (+5฿)</label>
+                        <label><input type="checkbox" name="addons" value="ดินเบา"> ดินเบา (+5฿)</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">เบอร์โทรศัพท์ (สำหรับแจ้งเตือน):</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                <button type="submit" class="cute-btn">✨ จองคิวเลย! ✨</button>
+            </form>
+            <div id="user-queue-status" class="status-box"></div>
+        </section>
+
+        <section id="admin-section" class="container hidden">
+            <h2>⚙️ จัดการคิว (สำหรับผู้ดูแล) ⚙️</h2>
+            <div id="queue-list"></div>
+        </section>
+        
+        <button id="toggle-mode-btn" class="cute-btn toggle-btn">สลับเป็นโหมดผู้ดูแล</button>
+
+    </main>
+
+    <footer>
+        <p>© 2025 ดึ๋งดั๋ง หวังกำไร. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
