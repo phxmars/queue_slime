@@ -1,248 +1,286 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const bookingForm = document.getElementById('booking-form');
-    const userQueueStatus = document.getElementById('user-queue-status');
-    const toggleModeBtn = document.getElementById('toggle-mode-btn');
-    const userSection = document.getElementById('user-section');
-    const adminSection = document.getElementById('admin-section');
-    const queueList = document.getElementById('queue-list');
-    const userAddonsList = document.getElementById('user-addons-list');
-    const addonStockList = document.getElementById('addon-stock-list');
+:root {
+    --primary-color: #ff99cc; /* ชมพู */
+    --secondary-color: #a1e2ff; /* ฟ้า */
+    --accent-color: #ffef9e; /* เหลือง */
+    --background-color: #fff0f5; /* ชมพูอ่อน */
+    --text-color: #555;
+    --border-color: #ffc2d1;
+    --font-primary: 'Sriracha', cursive;
+    --font-secondary: 'Prompt', sans-serif;
+}
 
-    const adminPasswordInput = document.getElementById('admin-password-input');
-    const adminLoginBtn = document.getElementById('admin-login-btn');
-    const passwordForm = document.getElementById('password-form');
-    const adminContent = document.getElementById('admin-content');
+body {
+    font-family: var(--font-secondary);
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
 
-    const BASE_PRICE = 20;
-    const ADDON_PRICE = 5;
-    const ADMIN_PASSWORD = '60168';
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 2rem 1rem;
+    text-align: center;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-    let currentQueue = [];
-    const LOCAL_STORAGE_KEY_QUEUE = 'dunkdungQueue';
-    const LOCAL_STORAGE_KEY_STOCK = 'dunkdangAddonStock';
+h1 {
+    font-family: var(--font-primary);
+    font-size: 3rem;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
 
-    // *** ส่วนที่แก้ไข: ลบ 'มาชเมลโล่' ออกจากรายการทั้งหมด ***
-    const ALL_ADDONS = ['ผงมุก', 'โฟม', 'ดินเบา'];
-    let addonStockStatus = {};
+p {
+    font-size: 1.2rem;
+}
 
-    // --- ฟังก์ชันสำหรับจัดการคิว ---
-    const loadQueue = () => {
-        const storedQueue = localStorage.getItem(LOCAL_STORAGE_KEY_QUEUE);
-        if (storedQueue) {
-            currentQueue = JSON.parse(storedQueue);
-            renderQueue();
-        }
-    };
-    const saveQueue = () => {
-        localStorage.setItem(LOCAL_STORAGE_KEY_QUEUE, JSON.stringify(currentQueue));
-    };
+main {
+    padding: 2rem 1rem;
+    max-width: 800px;
+    width: 100%;
+    box-sizing: border-box;
+}
 
-    // --- ฟังก์ชันสำหรับจัดการสต็อกสินค้า ---
-    const loadAddonStock = () => {
-        const storedStock = localStorage.getItem(LOCAL_STORAGE_KEY_STOCK);
-        if (storedStock) {
-            addonStockStatus = JSON.parse(storedStock);
-        } else {
-            ALL_ADDONS.forEach(addon => {
-                addonStockStatus[addon] = 'in-stock';
-            });
-            saveAddonStock();
-        }
-    };
-    const saveAddonStock = () => {
-        localStorage.setItem(LOCAL_STORAGE_KEY_STOCK, JSON.stringify(addonStockStatus));
-    };
+.container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border: 3px solid var(--border-color);
+    margin-bottom: 2rem;
+}
 
-    // --- ฟังก์ชันสำหรับแสดงผล ---
-    const calculateTotalPrice = (addons) => {
-        return BASE_PRICE + (addons.length * ADDON_PRICE);
-    };
+h2 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-top: 0;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 10px;
+}
 
-    const showCuteAlert = (message) => {
-        alert('🌈 ' + message + ' 🎉');
-    };
+.form-group {
+    margin-bottom: 1.5rem;
+}
 
-    const renderUserStatus = () => {
-        if (currentQueue.length > 0) {
-            const firstQueue = currentQueue[0];
-            userQueueStatus.innerHTML = `
-                <p><strong>ตอนนี้เป็นคิวของ:</strong> ${firstQueue.name} (คิวที่ 1)</p>
-                <p>มีจำนวนคิวรออยู่: ${currentQueue.length - 1} คิว</p>
-                <p>กรุณารอการเรียกคิวจากผู้ดูแลนะคะ!</p>
-            `;
-        } else {
-            userQueueStatus.innerHTML = `<p>ตอนนี้ยังไม่มีคิวเลยค่ะ! มาจองเป็นคนแรกกันเถอะ~</p>`;
-        }
-    };
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
 
-    const renderUserAddons = () => {
-        userAddonsList.innerHTML = '';
-        ALL_ADDONS.forEach(addon => {
-            const isSoldOut = addonStockStatus[addon] === 'sold-out';
-            const label = document.createElement('label');
-            label.innerHTML = `<input type="checkbox" name="addons" value="${addon}" ${isSoldOut ? 'disabled' : ''}> ${addon} (+5฿)`;
-            if (isSoldOut) {
-                label.classList.add('sold-out-label');
-            }
-            userAddonsList.appendChild(label);
-        });
-    };
+input[type="text"], input[type="tel"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--secondary-color);
+    border-radius: 10px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
 
-    const renderAddonStock = () => {
-        addonStockList.innerHTML = '';
-        ALL_ADDONS.forEach(addon => {
-            const isSoldOut = addonStockStatus[addon] === 'sold-out';
-            const addonDiv = document.createElement('div');
-            addonDiv.classList.add('addon-item');
-            if (isSoldOut) {
-                addonDiv.classList.add('sold-out');
-            }
-            addonDiv.innerHTML = `
-                <span>${addon}</span>
-                <button class="stock-btn ${isSoldOut ? 'in-stock' : 'sold-out-btn'}" data-addon="${addon}">
-                    ${isSoldOut ? 'เพิ่มของ' : 'ของหมด'}
-                </button>
-            `;
-            addonStockList.appendChild(addonDiv);
-        });
-    };
+input[type="text"]:focus, input[type="tel"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
 
-    const renderQueue = () => {
-        queueList.innerHTML = '';
-        if (currentQueue.length === 0) {
-            queueList.innerHTML = `<p style="text-align: center;">ไม่มีคิวในระบบเลยค่ะ 💤</p>`;
-            renderUserStatus();
-            return;
-        }
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
 
-        currentQueue.forEach((queueItem, index) => {
-            const totalPrice = calculateTotalPrice(queueItem.addons);
-            const queueDiv = document.createElement('div');
-            queueDiv.classList.add('queue-item');
-            if (index === 0) {
-                queueDiv.classList.add('current');
-            }
+.options-grid label {
+    font-weight: normal;
+    background-color: var(--accent-color);
+    padding: 10px 15px;
+    border-radius: 15px;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-            queueDiv.innerHTML = `
-                <div>
-                    <strong>${index + 1}. ${queueItem.name}</strong><br>
-                    <span><strong>เบอร์:</strong> ${queueItem.phone}</span><br>
-                    <span><strong>ของตกแต่ง:</strong> ${queueItem.addons.length > 0 ? queueItem.addons.join(', ') : 'ไม่มี'}</span><br>
-                    <span><strong>ราคารวม:</strong> ${totalPrice}฿</span>
-                </div>
-                <div class="admin-actions">
-                    <button class="call-btn" data-index="${index}">เรียกคิว</button>
-                    <button class="move-btn" data-index="${index}">ย้ายไปท้ายสุด</button>
-                    <button class="cancel-btn" data-index="${index}">ยกเลิก</button>
-                </div>
-            `;
-            queueList.appendChild(queueDiv);
-        });
-        renderUserStatus();
-    };
+.options-grid label:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
 
-    // --- จัดการ Event Listeners ---
-    bookingForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+.options-grid input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.2);
+}
 
-        const username = document.getElementById('username').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const selectedAddons = Array.from(document.querySelectorAll('input[name="addons"]:checked')).map(cb => cb.value);
+.options-grid label.sold-out-label {
+    background-color: #ddd;
+    color: #888;
+    cursor: not-allowed;
+    position: relative;
+    text-decoration: line-through;
+}
 
-        if (!username || !phone) {
-            showCuteAlert('โปรดกรอกชื่อเล่นและเบอร์โทรศัพท์ให้ครบถ้วนก่อนนะคะ! 😥');
-            return;
-        }
+.options-grid label.sold-out-label::after {
+    content: "หมดแล้ว!";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #d9534f;
+    opacity: 0.8;
+}
 
-        const newQueueItem = {
-            name: username,
-            phone: phone,
-            addons: selectedAddons,
-            timestamp: new Date().toISOString()
-        };
+.options-grid label.sold-out-label input[type="checkbox"] {
+    display: none;
+}
 
-        currentQueue.push(newQueueItem);
-        saveQueue();
-        renderQueue();
-        showCuteAlert(`คุณ ${username} จองคิวเรียบร้อยแล้ว! คิวของคุณคือคิวที่ ${currentQueue.length} ค่ะ! ✨`);
-        bookingForm.reset();
-        renderUserAddons();
-    });
+.cute-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s, background-color 0.2s;
+}
 
-    queueList.addEventListener('click', (e) => {
-        const index = parseInt(e.target.dataset.index);
-        
-        if (e.target.classList.contains('call-btn')) {
-            const calledQueue = currentQueue[index];
-            showCuteAlert(`🎉 เรียกคิวคุณ ${calledQueue.name} (คิวที่ ${index + 1}) แล้วค่ะ!`);
-            currentQueue.splice(index, 1);
-        } else if (e.target.classList.contains('move-btn')) {
-            if (index !== currentQueue.length - 1) {
-                const movedQueue = currentQueue.splice(index, 1)[0];
-                currentQueue.push(movedQueue);
-                showCuteAlert(`คิวของคุณ ${movedQueue.name} ถูกย้ายไปท้ายสุดแล้วค่ะ!`);
-            } else {
-                showCuteAlert('คิวนี้อยู่ท้ายสุดอยู่แล้วค่ะ 😅');
-            }
-        } else if (e.target.classList.contains('cancel-btn')) {
-            const cancelledQueue = currentQueue.splice(index, 1)[0];
-            showCuteAlert(`คิวของคุณ ${cancelledQueue.name} ถูกยกเลิกแล้วค่ะ! 😢`);
-        }
+.cute-btn:hover {
+    background-color: #ff77b3;
+    transform: translateY(-2px);
+}
 
-        saveQueue();
-        renderQueue();
-    });
+.toggle-btn {
+    width: auto;
+    margin: 1rem auto;
+    background-color: var(--secondary-color);
+}
 
-    addonStockList.addEventListener('click', (e) => {
-        const addonName = e.target.dataset.addon;
-        if (addonName) {
-            if (addonStockStatus[addonName] === 'in-stock') {
-                addonStockStatus[addonName] = 'sold-out';
-                showCuteAlert(`${addonName} หมดแล้วค่ะ!`);
-            } else {
-                addonStockStatus[addonName] = 'in-stock';
-                showCuteAlert(`มี ${addonName} มาเพิ่มแล้วค่ะ!`);
-            }
-            saveAddonStock();
-            renderAddonStock();
-            renderUserAddons();
-        }
-    });
+.toggle-btn:hover {
+    background-color: #8cc3e6;
+}
 
-    // --- ส่วนที่แก้ไขสำหรับระบบรหัสผ่านแบบใหม่ ---
-    toggleModeBtn.addEventListener('click', () => {
-        const isUserMode = !userSection.classList.contains('hidden');
-        
-        if (isUserMode) {
-            userSection.classList.add('hidden');
-            adminSection.classList.remove('hidden');
-            passwordForm.classList.remove('hidden');
-            adminContent.classList.add('hidden');
-            toggleModeBtn.textContent = 'สลับเป็นโหมดผู้ใช้งาน';
-        } else {
-            userSection.classList.remove('hidden');
-            adminSection.classList.add('hidden');
-            toggleModeBtn.textContent = 'สลับเป็นโหมดผู้ดูแล';
-            showCuteAlert('กลับสู่โหมดผู้ใช้งานแล้ว! ✨');
-        }
-        renderQueue();
-    });
+.status-box {
+    background-color: var(--accent-color);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 1.5rem;
+    text-align: center;
+    color: var(--text-color);
+}
 
-    adminLoginBtn.addEventListener('click', () => {
-        const enteredPassword = adminPasswordInput.value;
-        if (enteredPassword === ADMIN_PASSWORD) {
-            passwordForm.classList.add('hidden');
-            adminContent.classList.remove('hidden');
-            showCuteAlert('ยินดีต้อนรับเข้าสู่โหมดผู้ดูแล! 🗝️');
-            renderAddonStock();
-        } else {
-            showCuteAlert('รหัสผ่านไม่ถูกต้อง! 🚫');
-            adminPasswordInput.value = '';
-        }
-    });
+.queue-item {
+    background-color: #f7f7f7;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-    // --- เริ่มต้นการทำงาน ---
-    loadQueue();
-    loadAddonStock();
-    renderUserAddons();
-});
+.queue-item.current {
+    background-color: #d1ffc2;
+    border-color: #5cb85c;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.admin-actions button {
+    margin-left: 8px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.admin-actions .call-btn { background-color: #5cb85c; }
+.admin-actions .move-btn { background-color: #f0ad4e; }
+.admin-actions .cancel-btn { background-color: #d9534f; }
+
+.hidden {
+    display: none;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    color: var(--text-color);
+    width: 100%;
+    margin-top: auto;
+}
+
+.addon-item {
+    background-color: #f7f7f7;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.addon-item.sold-out {
+    background-color: #ffcccc;
+    color: #888;
+    position: relative;
+    overflow: hidden;
+}
+
+.addon-item.sold-out::after {
+    content: "หมดแล้ว!";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-20deg);
+    font-size: 2rem;
+    font-weight: bold;
+    color: #d9534f;
+    opacity: 0.8;
+    z-index: 10;
+}
+
+.stock-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.stock-btn.in-stock { background-color: #5cb85c; }
+.stock-btn.sold-out-btn { background-color: #d9534f; }
+
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2rem;
+    }
+    .cute-btn {
+        font-size: 1rem;
+        padding: 12px 20px;
+    }
+}
